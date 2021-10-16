@@ -1,10 +1,10 @@
 package ru.itmo.soalab2.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.soalab2.model.City;
 import ru.itmo.soalab2.repo.CityRepository;
-
-import java.time.ZonedDateTime;
+import ru.itmo.soalab2.services.CityService;
 import java.util.List;
 
 @RestController
@@ -12,25 +12,36 @@ import java.util.List;
 public class CitiesController {
 
     private final CityRepository cityRepository;
+    private CityService cityService;
 
     CitiesController(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
-    }
-
-    @PostMapping
-    City addCity(@RequestBody City newCity) {
-        newCity.setCreationDate(ZonedDateTime.now());
-        return cityRepository.save(newCity);
+        this.cityService = new CityService(cityRepository);
     }
 
     @GetMapping
     List<City> getAllCities() {
-        List<City> allCities = cityRepository.findAll();
-        return allCities;
+        return cityRepository.findAll();
+    }
+
+    @GetMapping(value = "/{id}")
+    City getCityById(@PathVariable Long id) {
+        City city = cityRepository.findById(id).get();
+        return city;
+    }
+
+    @PostMapping
+    ResponseEntity<?> addCity(@RequestBody City newCity) throws Exception {
+        return cityService.createCity(newCity);
+    }
+
+    @PutMapping(value = "/{id}")
+    ResponseEntity<?> updateCity(@RequestBody City updatedCity) throws Exception {
+        return cityService.updateCity(updatedCity);
     }
 
     @DeleteMapping(value = "/{id}")
-    void deleteCity(@PathVariable Long id) {
-        cityRepository.deleteById(id);
+    ResponseEntity<?> deleteCity(@PathVariable Long id) {
+        return cityService.deleteCity(id);
     }
 }
