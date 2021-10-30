@@ -22,11 +22,6 @@ public class Coordinates implements Serializable {
         this.y = y;
     }
 
-//    public void update(JaxbCoordinates data) {
-//        this.x = data.getX();
-//        this.y = data.getY();
-//    }
-
     public int getId() {
         return id;
     }

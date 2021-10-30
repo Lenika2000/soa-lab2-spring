@@ -19,7 +19,7 @@ public class HumanValidator {
                 errorList.add(new Error(700, f.getName(), String.format("Human %s is not specified", f.getName())));
             }
         }
-        if (human.getHeight() <= 0) {
+        if (human.getHeight() != null && human.getHeight() <= 0) {
             errorList.add(new Error(701, "human", "Human height should be bigger than 0"));
         }
         return errorList;

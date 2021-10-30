@@ -17,7 +17,7 @@ public class City implements Serializable {
     private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private float area; //Значение поля должно быть больше 0
     private int population; //Значение поля должно быть больше 0
-    private int metersAboveSeaLevel;
+    private Integer metersAboveSeaLevel;
     private Double timezone; //Значение поля должно быть больше -13, Максимальное значение поля: 15
     @Enumerated(EnumType.STRING)
     private Government government; //Поле не может быть null
@@ -27,32 +27,7 @@ public class City implements Serializable {
     @JoinColumn
     private Human governor; //Поле может быть null
 
-    public City(String name, Coordinates coordinates, ZonedDateTime creationDate, float area, int population, int metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {
-        this.name = name;
-        this.coordinates = coordinates;
-        this.creationDate = creationDate;
-        this.area = area;
-        this.population = population;
-        this.metersAboveSeaLevel = metersAboveSeaLevel;
-        this.timezone = timezone;
-        this.government = government;
-        this.standardOfLiving = standardOfLiving;
-        this.governor = governor;
-    }
-
-//    public void update(JaxbCity data) {
-//        this.name = data.getName();
-//        this.coordinates.update(data.getCoordinates());
-//        this.area = data.getArea();
-//        this.population = data.getPopulation();
-//        this.metersAboveSeaLevel = data.getMetersAboveSeaLevel();
-//        this.timezone = data.getTimezone();
-//        this.government = data.getGovernment();
-//        this.standardOfLiving = data.getStandardOfLiving();
-//        this.governor.update(data.getGovernor());
-//    }
-
-    public City(Long id, String name, Coordinates coordinates, ZonedDateTime creationDate, float area, int population, int metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {
+    public City(Long id, String name, Coordinates coordinates, ZonedDateTime creationDate, float area, int population, Integer metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;

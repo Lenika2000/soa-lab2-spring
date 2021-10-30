@@ -13,11 +13,9 @@ import java.util.Map;
 @RequestMapping("/api/cities")
 public class CitiesController {
 
-    private final CityRepository cityRepository;
     private CityService cityService;
 
     CitiesController(CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
         this.cityService = new CityService(cityRepository);
     }
 
@@ -54,7 +52,7 @@ public class CitiesController {
     }
 
     @GetMapping(params = "meters-above-sea-level")
-    ResponseEntity<List<City>> getCitiesByName(@RequestParam(name= "meters-above-sea-level") int metersAboveSeaLevel) {
+    ResponseEntity<?> getCitiesByMetersAboveSeaLevel(@RequestParam(name= "meters-above-sea-level", defaultValue = "0") int metersAboveSeaLevel) {
         return cityService.filterCitiesByMetersAboveSeaLevel(metersAboveSeaLevel);
     }
 

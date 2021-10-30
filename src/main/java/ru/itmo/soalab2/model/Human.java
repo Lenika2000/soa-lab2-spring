@@ -10,10 +10,10 @@ public class Human implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
-    private double height; //Значение поля должно быть больше 0
+    private Double height; //Значение поля должно быть больше 0
     private LocalDateTime birthday;
 
-    public Human(int id, double height, LocalDateTime birthday) {
+    public Human(int id, Double height, LocalDateTime birthday) {
         this.id = id;
         this.height = height;
         this.birthday = birthday;
@@ -21,11 +21,6 @@ public class Human implements Serializable {
 
     public Human() {
     }
-
-//    public void update(JaxbHuman humanData) {
-//        this.birthday = humanData.getBirthday();
-//        this.height = humanData.getHeight();
-//    }
 
     public int getId() {
         return id;
@@ -35,7 +30,7 @@ public class Human implements Serializable {
         this.id = id;
     }
 
-    public double getHeight() {
+    public Double getHeight() {
         return height;
     }
 

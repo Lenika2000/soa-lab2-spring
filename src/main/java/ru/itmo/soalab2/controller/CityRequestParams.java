@@ -214,9 +214,9 @@ public class CityRequestParams {
         String field = args[0];
         Sort currentSorting = Sort.by(field);
         if (args[1].equals("asc"))
-            currentSorting.ascending();
+            currentSorting = currentSorting.ascending();
         else if (args[1].equals("desc"))
-            currentSorting.descending();
+            currentSorting = currentSorting.descending();
         else
             throw new ParseException("incorrect sort parameter " + sort[0], 0);
         return currentSorting;
