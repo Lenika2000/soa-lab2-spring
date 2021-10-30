@@ -1,12 +1,21 @@
 package ru.itmo.soalab2.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import ru.itmo.soalab2.controller.CityRequestParams;
 import ru.itmo.soalab2.model.City;
 import ru.itmo.soalab2.model.OperationResponse;
+import ru.itmo.soalab2.model.PaginationResult;
+import ru.itmo.soalab2.repo.CityFilterSpecification;
 import ru.itmo.soalab2.repo.CityRepository;
 import ru.itmo.soalab2.validators.CityValidator;
 import ru.itmo.soalab2.validators.ValidateFieldsException;
+import java.text.ParseException;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class CityService {
     private final CityValidator cityValidator;
@@ -22,7 +31,7 @@ public class CityService {
             newCity.setCreationDate(ZonedDateTime.now());
             cityValidator.validate(newCity);
             Long id = cityRepository.save(newCity).getId();
-            return ResponseEntity.status(200).body(new OperationResponse(id, "City created successfully"));
+            return ResponseEntity.status(201).body(new OperationResponse(id, "City created successfully"));
         } catch (ValidateFieldsException ex) {
             return sendErrorList(ex);
         }
@@ -49,71 +58,53 @@ public class CityService {
         if (isFound) {
             return ResponseEntity.status(200).body(new OperationResponse(id, "City deleted successfully"));
         } else {
-            return ResponseEntity.status(404).body(new OperationResponse(id,"Cannot find city with id " + id));
+            return ResponseEntity.status(404).body(new OperationResponse(id, "Cannot find city with id " + id));
         }
     }
 
-//    public void getAllCities(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        int numberOfRecordsPerPage = 5;
-//        int selectedPage = 1;
-//        List<City> cities = cityDao.getAllCities();
-//        int citiesQuality = (int)Math. ceil( (double) (cities.size()+1) / numberOfRecordsPerPage);
-//        request.setAttribute("pagesQuality", IntStream.range(1, (int)Math. ceil( citiesQuality + 1)).toArray());
-//        request.setAttribute("citiesLength", cities.size());
-//        int from = (selectedPage - 1) * numberOfRecordsPerPage;
-//        request.setAttribute("cities", Arrays.copyOfRange(cities.toArray(), from , from + numberOfRecordsPerPage) );
-//        request.getRequestDispatcher("jsp/main-page.jsp").forward(request, response);
-//    }
+    public ResponseEntity<?> getAllCities(CityRequestParams filterParams) {
+        CityFilterSpecification spec = new CityFilterSpecification(filterParams);
+        try {
+            Sort currentSorting = filterParams.parseSorting();
+            // todo сортировка по внутреннему полю
+            Pageable sortedBy = PageRequest.of(filterParams.page, filterParams.size, currentSorting);
+            Page<City> res = cityRepository.findAll(spec, sortedBy);
+            long count = cityRepository.count(spec);
+            PaginationResult r = new PaginationResult(filterParams.size, filterParams.page, count, res.getContent());
+            return ResponseEntity.status(200).body(r);
+        } catch (ParseException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 
-//    public void filterCities(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        Map<String, String[]> queryMap = request.getParameterMap();
-//        List<City> filteredCities = cityDao.getFilteredCities(queryMap);
-//        sendCities(request, response, filteredCities);
-//    }
-//
-//    public void filterCitiesByMetersAboveSeaLevel(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        int metersAboveSeaLevel = Integer.parseInt(request.getParameter("metersAboveSeaLevel"));
-//        List<City> filteredCities = cityDao.findCitiesMetersAboveSeeLevelMore(metersAboveSeaLevel);
-//        sendCities(request, response, filteredCities);
-//    }
-//
-//    private void sendCities(HttpServletRequest request, HttpServletResponse response, List<City> filteredCities) throws Exception {
-//        int numberOfRecordsPerPage = Integer.parseInt(request.getParameter("numberOfRecordsPerPage"));
-//        int selectedPage = Integer.parseInt(request.getParameter("selectedPage"));
-//        int from = (selectedPage - 1) * numberOfRecordsPerPage;
-//        int to = (from + numberOfRecordsPerPage > filteredCities.size()) ? filteredCities.size() : from + numberOfRecordsPerPage ;
-//        List<City> cities = new ArrayList<>(filteredCities.subList(from , to));
-//        response.setContentType("text/xml");
-//        response.setCharacterEncoding("UTF-8");
-//        citiesList.setCities(cities);
-//        response.setStatus(200);
-//        Writer writer = new StringWriter();
-//        Serializer serializer = new Persister();
-//        serializer.write(citiesList, writer);
-//        String xml = writer.toString();
-//        response.getWriter().print(xml);
-//    }
-//
+    public ResponseEntity<List<City>> filterCitiesByMetersAboveSeaLevel(int metersAboveSeaLevel) {
+        List<City> cities = cityRepository.findByMetersAboveSeaLevelGreaterThan(metersAboveSeaLevel);
+        if (cities.isEmpty()) {
+            return ResponseEntity.status(404).body(cities);
+        } else {
+            return ResponseEntity.status(200).body(cities);
+        }
+    }
+
     private ResponseEntity<?> sendErrorList(ValidateFieldsException ex) {
         return ResponseEntity.status(400).body(ex.getErrorMsg());
     }
-//
-//    public void getUniqueMetersAboveSeeLevel(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        List<Integer> uniqueMetersAboveSeeLevel = cityDao.getUniqueMetersAboveSeeLevel();
-//        metersAboveSeaLevelList.setMeters(uniqueMetersAboveSeeLevel);
-//        response.setStatus(200);
-//        Writer writer = new StringWriter();
-//        response.setStatus(200);
-//        Serializer serializer = new Persister();
-//        serializer.write(metersAboveSeaLevelList, writer);
-//        String xml = writer.toString();
-//        response.getWriter().print(xml);
-//    }
-//
-//    public void sort(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        String sortBy = request.getParameter("sortBy");
-//        String order = request.getParameter("order");
-//        List<City> sortedCities = cityDao.sort(sortBy, order);
-//        sendCities(request, response, sortedCities);
-//    }
+
+    public ResponseEntity<List<City>> getCitiesByName(String name) {
+        List<City> cities = cityRepository.findByNameContaining(name);
+        if (cities.isEmpty()) {
+            return ResponseEntity.status(404).body(cities);
+        } else {
+            return ResponseEntity.status(200).body(cities);
+        }
+    }
+
+    public ResponseEntity<List<String>> getUniqueMetersAboveSeeLevel() {
+        List<String> meters = cityRepository.findDistinctMetersAboveSeaLevel();
+        if (meters.isEmpty()) {
+            return ResponseEntity.status(404).body(meters);
+        } else {
+            return ResponseEntity.status(200).body(meters);
+        }
+    }
 }

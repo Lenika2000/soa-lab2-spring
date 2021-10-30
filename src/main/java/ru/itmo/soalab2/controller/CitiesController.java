@@ -1,11 +1,13 @@
 package ru.itmo.soalab2.controller;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.soalab2.model.City;
 import ru.itmo.soalab2.repo.CityRepository;
 import ru.itmo.soalab2.services.CityService;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/cities")
@@ -19,16 +21,17 @@ public class CitiesController {
         this.cityService = new CityService(cityRepository);
     }
 
-    @GetMapping
-    List<City> getAllCities() {
-        return cityRepository.findAll();
+    private CityRequestParams getFilterParams(Map<String, String[]> map) {
+        return new CityRequestParams(map);
     }
 
-    @GetMapping(value = "/{id}")
-    City getCityById(@PathVariable Long id) {
-        City city = cityRepository.findById(id).get();
-        return city;
+    @GetMapping
+    ResponseEntity<?> getAllCities(HttpServletRequest httpServletRequest ) {
+        Map<String, String[]> requestParameterMap = httpServletRequest.getParameterMap();
+        CityRequestParams filterParams = this.getFilterParams(requestParameterMap);
+        return cityService.getAllCities(filterParams);
     }
+
 
     @PostMapping
     ResponseEntity<?> addCity(@RequestBody City newCity) throws Exception {
@@ -43,5 +46,20 @@ public class CitiesController {
     @DeleteMapping(value = "/{id}")
     ResponseEntity<?> deleteCity(@PathVariable Long id) {
         return cityService.deleteCity(id);
+    }
+
+    @GetMapping(params = "name")
+    ResponseEntity<List<City>> getCitiesByName(@RequestParam String name) {
+        return cityService.getCitiesByName(name);
+    }
+
+    @GetMapping(params = "meters-above-sea-level")
+    ResponseEntity<List<City>> getCitiesByName(@RequestParam(name= "meters-above-sea-level") int metersAboveSeaLevel) {
+        return cityService.filterCitiesByMetersAboveSeaLevel(metersAboveSeaLevel);
+    }
+
+    @GetMapping(value = "/meters-above-sea-level")
+    ResponseEntity<List<String>> getUniqueMetersAboveSeaLevel() {
+        return cityService.getUniqueMetersAboveSeeLevel();
     }
 }
