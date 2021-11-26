@@ -211,6 +211,12 @@ public class CityRequestParams {
         String[] args = sort[0].split("_", 2);
         if (args.length != 2)
             throw new ParseException("incorrect sort parameter " + sort[0], 0);
+        if (args[0].equals(X_PARAM) || args[0].equals(Y_PARAM)) {
+            args[0] = "coordinates." + args[0];
+        }
+        if (args[0].equals(HEIGHT_PARAM) || args[0].equals(BIRTHDAY_PARAM)) {
+            args[0] = "governor." + args[0];
+        }
         String field = args[0];
         Sort currentSorting = Sort.by(field);
         if (args[1].equals("asc"))

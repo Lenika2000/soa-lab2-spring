@@ -1,13 +1,14 @@
 package ru.itmo.soalab2.controller;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.soalab2.model.City;
+import ru.itmo.soalab2.model.CityFromClient;
 import ru.itmo.soalab2.repo.CityRepository;
 import ru.itmo.soalab2.services.CityService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-
 
 @RestController
 @RequestMapping("/api/cities")
@@ -30,14 +31,13 @@ public class CitiesController {
         return cityService.getAllCities(filterParams);
     }
 
-
     @PostMapping
-    ResponseEntity<?> addCity(@RequestBody City newCity) throws Exception {
+    ResponseEntity<?> addCity(@RequestBody CityFromClient newCity) throws Exception {
         return cityService.createCity(newCity);
     }
 
     @PutMapping(value = "/{id}")
-    ResponseEntity<?> updateCity(@RequestBody City updatedCity) throws Exception {
+    ResponseEntity<?> updateCity(@RequestBody CityFromClient updatedCity) throws Exception {
         return cityService.updateCity(updatedCity);
     }
 

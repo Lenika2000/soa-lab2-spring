@@ -1,6 +1,5 @@
 package ru.itmo.soalab2.services;
 
-import org.hibernate.annotations.Persister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import ru.itmo.soalab2.controller.CityRequestParams;
 import ru.itmo.soalab2.model.City;
+import ru.itmo.soalab2.model.CityFromClient;
 import ru.itmo.soalab2.model.OperationResponse;
 import ru.itmo.soalab2.model.PaginationResult;
 import ru.itmo.soalab2.repo.CityFilterSpecification;
@@ -28,23 +28,24 @@ public class CityService {
         this.cityRepository = cityRepository;
     }
 
-    public ResponseEntity<?> createCity(City newCity) throws Exception {
+    public ResponseEntity<?> createCity(CityFromClient newCity) throws Exception {
         try {
-            newCity.setCreationDate(ZonedDateTime.now());
-            cityValidator.validate(newCity);
-            Long id = cityRepository.save(newCity).getId();
+            City validCity = cityValidator.validate(newCity);
+            validCity.setCreationDate(ZonedDateTime.now());
+            Long id = cityRepository.save(validCity).getId();
             return ResponseEntity.status(201).body(new OperationResponse(id, "City created successfully"));
         } catch (ValidateFieldsException ex) {
             return sendErrorList(ex);
         }
     }
 
-    public ResponseEntity<?> updateCity(City updatedCity) throws Exception {
+    public ResponseEntity<?> updateCity(CityFromClient updatedCity) throws Exception {
         try {
-            cityValidator.validate(updatedCity);
+            City validCity = cityValidator.validate(updatedCity);
             boolean isFound = cityRepository.existsById(updatedCity.getId());
             if (isFound) {
-                cityRepository.save(updatedCity);
+                validCity.setCreationDate(cityRepository.findCreationDateByCityId(updatedCity.getId()));
+                cityRepository.save(validCity);
                 return ResponseEntity.status(200).body(new OperationResponse(updatedCity.getId(), "City updated successfully"));
             } else {
                 return ResponseEntity.status(404).body(new OperationResponse(updatedCity.getId(), "Cannot find city with id " + updatedCity.getId()));
@@ -68,7 +69,6 @@ public class CityService {
         CityFilterSpecification spec = new CityFilterSpecification(filterParams);
         try {
             Sort currentSorting = filterParams.parseSorting();
-            // todo сортировка по внутреннему полю
             Pageable sortedBy = PageRequest.of(filterParams.page, filterParams.size, currentSorting);
             Page<City> res = cityRepository.findAll(spec, sortedBy);
             long count = cityRepository.count(spec);
