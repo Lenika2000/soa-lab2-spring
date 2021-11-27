@@ -79,7 +79,7 @@ public class CityRequestParams {
                                      String[] sort,
                                      String[] page,
                                      String[] size) {
-        this.name = name == null? null : name[0];
+        this.name = name == null ? null : name[0];
         this.x = x;
         this.y = y;
         this.creationDate = creationDate;

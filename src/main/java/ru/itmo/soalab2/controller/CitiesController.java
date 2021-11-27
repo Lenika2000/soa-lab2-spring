@@ -46,7 +46,7 @@ public class CitiesController {
         return cityService.deleteCity(id);
     }
 
-    @GetMapping(params = "name")
+    @GetMapping(params = "byname")
     ResponseEntity<List<City>> getCitiesByName(@RequestParam String name) {
         return cityService.getCitiesByName(name);
     }
