@@ -47,7 +47,7 @@ public class CitiesController {
     }
 
     @GetMapping(params = "byname")
-    ResponseEntity<List<City>> getCitiesByName(@RequestParam String name) {
+    ResponseEntity<List<City>> getCitiesByName(@RequestParam(name = "byname") String name) {
         return cityService.getCitiesByName(name);
     }
 

@@ -5,27 +5,48 @@ import ru.itmo.soalab2.model.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@XmlRootElement(name = "сityRequestParams")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CityRequestParams {
+    @XmlElement
     public String name;
+    @XmlElement
     public String[] x;
+    @XmlElement
     public String[] y;
+    @XmlElement
     public String[] creationDate;
+    @XmlElement
     public String[] area;
+    @XmlElement
     public String[] population;
+    @XmlElement
     public String[] metersAboveSeaLevel;
+    @XmlElement
     public String[] timezone;
+    @XmlElement
     public String[] government;
+    @XmlElement
     public String[] standardOfLiving;
+    @XmlElement
     public String[] birthday;
+    @XmlElement
     public String[] height;
+    @XmlElement
     public String[] sort;
+    @XmlElement
     public int page;
+    @XmlElement
     public int size;
 
     private static final String NAME_PARAM = "name";
@@ -94,6 +115,9 @@ public class CityRequestParams {
         this.sort = sort;
         this.page = page == null ? 0 : Integer.parseInt(page[0]);
         this.size = size == null ? 5 : Integer.parseInt(size[0]);
+    }
+
+    public CityRequestParams() {
     }
 
     private String like(String val) {

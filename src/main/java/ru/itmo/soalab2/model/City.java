@@ -1,30 +1,47 @@
 package ru.itmo.soalab2.model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
 @Table
+@XmlRootElement(name = "city")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class City implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @XmlElement
     private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    @XmlElement
     private String name; //Поле не может быть null, Строка не может быть пустой
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn
+    @XmlElement
     private Coordinates coordinates; //Поле не может быть null
+    @XmlElement
     private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    @XmlElement
     private float area; //Значение поля должно быть больше 0
+    @XmlElement
     private int population; //Значение поля должно быть больше 0
+    @XmlElement
     private Integer metersAboveSeaLevel;
+    @XmlElement
     private Double timezone; //Значение поля должно быть больше -13, Максимальное значение поля: 15
     @Enumerated(EnumType.STRING)
+    @XmlElement
     private Government government; //Поле не может быть null
     @Enumerated(EnumType.STRING)
+    @XmlElement
     private StandardOfLiving standardOfLiving; //Поле может быть null
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn
+    @XmlElement
     private Human governor; //Поле может быть null
 
     public City(Long id, String name, Coordinates coordinates, ZonedDateTime creationDate, float area, int population, Integer metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {

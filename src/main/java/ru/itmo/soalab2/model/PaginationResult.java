@@ -1,26 +1,32 @@
 package ru.itmo.soalab2.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.*;
 
+@XmlRootElement(name = "paginationResult")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PaginationResult {
-
+    @XmlElement
     private final int pageSize;
+    @XmlElement
     private final int pageIndex;
+    @XmlElement
     private final long totalItems;
-    private final List<City> list;
-    PaginationResult() {
+    @XmlElementWrapper(name = "list")
+    @XmlElement
+    private final City[] items;
+
+    public PaginationResult() {
+        this.items = new City[]{new City()};
         pageSize = 0;
         pageIndex = 0;
         totalItems = 0;
-        list = new ArrayList<>();
     }
 
-    public PaginationResult(int pageSize, int pageIndex, long totalItems, List<City> list) {
+    public PaginationResult(int pageSize, int pageIndex, long totalItems, City[] list) {
         this.pageSize = pageSize;
         this.pageIndex = pageIndex;
         this.totalItems = totalItems;
-        this.list = list;
+        this.items = list;
     }
 
     public int getPageSize() {
@@ -35,7 +41,7 @@ public class PaginationResult {
         return totalItems;
     }
 
-    public List<City> getList() {
-        return list;
+    public City[] getList() {
+        return items;
     }
 }

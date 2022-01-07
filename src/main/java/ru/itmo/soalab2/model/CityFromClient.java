@@ -1,15 +1,33 @@
 package ru.itmo.soalab2.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "cityFromClient")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CityFromClient {
+
+    @XmlElement
     private Long id;
+    @XmlElement
     private String name;
+    @XmlElement
     private CoordinatesFromClient coordinates;
+    @XmlElement
     private String area;
+    @XmlElement
     private String population;
+    @XmlElement
     private String metersAboveSeaLevel;
+    @XmlElement
     private String timezone;
+    @XmlElement
     private Government government;
+    @XmlElement
     private StandardOfLiving standardOfLiving;
+    @XmlElement
     private HumanFromClient governor;
 
     public CityFromClient(Long id, String name, CoordinatesFromClient coordinates, String area, String population, String metersAboveSeaLevel, String timezone, Government government, StandardOfLiving standardOfLiving, HumanFromClient governor) {
@@ -23,6 +41,9 @@ public class CityFromClient {
         this.government = government;
         this.standardOfLiving = standardOfLiving;
         this.governor = governor;
+    }
+
+    public CityFromClient() {
     }
 
     public Long getId() {

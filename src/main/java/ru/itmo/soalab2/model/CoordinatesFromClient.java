@@ -1,8 +1,18 @@
 package ru.itmo.soalab2.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "сoordinatesFromClient")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CoordinatesFromClient {
+    @XmlElement
     private int id;
+    @XmlElement
     private String x;
+    @XmlElement
     private String y;
 
 
@@ -10,6 +20,9 @@ public class CoordinatesFromClient {
         this.id = id;
         this.x = x;
         this.y = y;
+    }
+
+    public CoordinatesFromClient() {
     }
 
     public int getId() {

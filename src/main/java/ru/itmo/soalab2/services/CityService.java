@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import ru.itmo.soalab2.controller.CityRequestParams;
-import ru.itmo.soalab2.model.City;
-import ru.itmo.soalab2.model.CityFromClient;
-import ru.itmo.soalab2.model.OperationResponse;
-import ru.itmo.soalab2.model.PaginationResult;
+import ru.itmo.soalab2.model.*;
 import ru.itmo.soalab2.repo.CityFilterSpecification;
 import ru.itmo.soalab2.repo.CityRepository;
 import ru.itmo.soalab2.validators.CityValidator;
@@ -17,6 +14,7 @@ import ru.itmo.soalab2.validators.ValidateFieldsException;
 
 import java.text.ParseException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CityService {
@@ -72,7 +70,7 @@ public class CityService {
             Pageable sortedBy = PageRequest.of(filterParams.page, filterParams.size, currentSorting);
             Page<City> res = cityRepository.findAll(spec, sortedBy);
             long count = cityRepository.count(spec);
-            PaginationResult r = new PaginationResult(filterParams.size, filterParams.page, count, res.getContent());
+            PaginationResult r = new PaginationResult(filterParams.size, filterParams.page, count, (City[]) res.getContent().toArray());
             return ResponseEntity.status(200).body(r);
         } catch (ParseException e) {
             return ResponseEntity.status(404).body(e.getMessage());

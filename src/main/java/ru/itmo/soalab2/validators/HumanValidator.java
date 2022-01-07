@@ -5,6 +5,8 @@ import ru.itmo.soalab2.model.Human;
 import ru.itmo.soalab2.model.HumanFromClient;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,10 @@ public class HumanValidator {
         if (errorList.size() > 0) {
             throw new ValidateFieldsException(errorList);
         }
-        validatedHuman.setBirthday(human.getBirthday());
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSX");
+        String birthday = human.getBirthday().replace( "T" , " " );
+        validatedHuman.setBirthday(LocalDateTime.parse(birthday, format));
         if (human.getId() != 0) validatedHuman.setId(human.getId());
         return validatedHuman;
     }

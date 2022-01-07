@@ -2,15 +2,24 @@ package ru.itmo.soalab2.model;
 
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
 @Table
+@XmlRootElement(name = "coordinates")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Coordinates implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @XmlElement
     private int id;
+    @XmlElement
     private Integer x; //Значение поля должно быть больше -60, Поле не может быть null
+    @XmlElement
     private Long y; //Максимальное значение поля: 498, Поле не может быть null
 
     public Coordinates() {

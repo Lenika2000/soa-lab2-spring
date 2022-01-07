@@ -1,16 +1,27 @@
 package ru.itmo.soalab2.model;
 
-import java.time.LocalDateTime;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "humanFromClient")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HumanFromClient {
+    @XmlElement
     private int id;
+    @XmlElement
     private String height;
-    private LocalDateTime birthday;
+    @XmlElement
+    private String birthday;
 
-    public HumanFromClient(int id, String height, LocalDateTime birthday) {
+    public HumanFromClient(int id, String height, String birthday) {
         this.id = id;
         this.height = height;
         this.birthday = birthday;
+    }
+
+    public HumanFromClient() {
     }
 
     public int getId() {
@@ -29,11 +40,11 @@ public class HumanFromClient {
         this.height = height;
     }
 
-    public LocalDateTime getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(LocalDateTime birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 }
