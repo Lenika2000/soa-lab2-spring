@@ -18,19 +18,19 @@ public class CityValidator {
 
     public City validate(CityFromClient city) throws IllegalAccessException, ValidateFieldsException {
 
-        List<Error> errorList = new ArrayList<>();
+        ArrayList<Error> errorList = new ArrayList<>();
         City validatedCity = new City();
 
         try {
             if (city.getCoordinates() != null) validatedCity.setCoordinates(coordinatesValidator.validate(city.getCoordinates()));
         } catch (ValidateFieldsException ex) {
-            errorList.addAll(ex.getErrorMsg());
+            errorList.addAll(ex.getErrorListWrap().getErrors());
         }
 
         try {
             if (city.getGovernor() != null) validatedCity.setGovernor(humanValidator.validate(city.getGovernor()));
         } catch (ValidateFieldsException ex) {
-            errorList.addAll(ex.getErrorMsg());
+            errorList.addAll(ex.getErrorListWrap().getErrors());
         }
 
         // проверка на null
@@ -41,7 +41,7 @@ public class CityValidator {
             }
         }
 
-        if (city.getName() != null &&city.getName().isEmpty()) {
+        if (city.getName() != null && city.getName().isEmpty()) {
             errorList.add(new Error(701,"name", "City name should not be empty"));
         }  else {
             validatedCity.setName(city.getName());
@@ -97,7 +97,7 @@ public class CityValidator {
         }
 
         if (errorList.size() > 0) {
-            throw new ValidateFieldsException(errorList);
+            throw new ValidateFieldsException("Validate error", errorList);
         }
         if (city.getId() != null) validatedCity.setId(city.getId());
         validatedCity.setGovernment(city.getGovernment());

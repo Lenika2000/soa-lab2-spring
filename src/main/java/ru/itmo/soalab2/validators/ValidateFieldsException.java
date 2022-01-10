@@ -1,22 +1,27 @@
 package ru.itmo.soalab2.validators;
 
 import ru.itmo.soalab2.model.Error;
+import ru.itmo.soalab2.model.ErrorListWrap;
 
-import java.util.List;
+import javax.xml.ws.WebFault;
+import java.util.ArrayList;
 
+@WebFault(name = "validateFieldsException", targetNamespace = "http://controller.soalab2.itmo.ru/")
 public class ValidateFieldsException extends Exception {
 
-    private List<Error> errorMsg;
+    private ErrorListWrap errorListWrap;
 
-    public ValidateFieldsException(List<Error> errorMessage) {
-        this.errorMsg = errorMessage;
+    public ValidateFieldsException(String message, ArrayList<Error> errors) {
+        super(message);
+        this.errorListWrap = new ErrorListWrap(errors);
     }
 
-    public List<Error> getErrorMsg() {
-        return errorMsg;
+    public ErrorListWrap getErrorListWrap() {
+        return errorListWrap;
     }
 
-    public void setErrorMsg(List<Error> errorMsg) {
-        this.errorMsg = errorMsg;
+    public void setErrorListWrap(ErrorListWrap errorListWrap) {
+        this.errorListWrap = errorListWrap;
     }
+
 }

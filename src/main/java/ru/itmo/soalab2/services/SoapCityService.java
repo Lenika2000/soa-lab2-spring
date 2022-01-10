@@ -15,9 +15,9 @@ import ru.itmo.soalab2.validators.CityValidator;
 import ru.itmo.soalab2.validators.ValidateFieldsException;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,15 +32,25 @@ public class SoapCityService {
         this.cityRepository = cityRepository;
     }
 
-    public City createCity(CityFromClient newCity) throws Exception {
-        City validCity = cityValidator.validate(newCity);
-        validCity.setCreationDate(ZonedDateTime.now());
+    public City createCity(CityFromClient newCity) throws ValidateFieldsException {
+        City validCity = null;
+        try {
+            validCity = cityValidator.validate(newCity);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        validCity.setCreationDate(LocalDateTime.now());
         Long id = cityRepository.save(validCity).getId();
         return cityRepository.findById(id).get();
     }
 
-    public City updateCity(CityFromClient updatedCity) throws Exception {
-        City validCity = cityValidator.validate(updatedCity);
+    public City updateCity(CityFromClient updatedCity) throws ValidateFieldsException {
+        City validCity = null;
+        try {
+            validCity = cityValidator.validate(updatedCity);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         boolean isFound = cityRepository.existsById(updatedCity.getId());
         if (isFound) {
             validCity.setCreationDate(cityRepository.findCreationDateByCityId(updatedCity.getId()));
@@ -50,18 +60,19 @@ public class SoapCityService {
         return null;
     }
 
-    public void deleteCity(Long id) throws CityServiceException {
+    public void deleteCity(Long id) throws WrongParamsFault {
         if (Objects.isNull(id)) {
-            throw new CityServiceException("id is incorrect", 400);
+            throw new WrongParamsFault("Id is incorrect", new WebServiceExceptionFaultDto("Id is incorrect", 400));
         }
         boolean isFound = cityRepository.existsById(id);
         if (!isFound) {
-            throw new CityServiceException("city with id " + id + " is not found", 404);
+            String errorMsg = "City with id " + id + " is not found";
+            throw new WrongParamsFault(errorMsg, new WebServiceExceptionFaultDto(errorMsg, 404));
         }
         cityRepository.deleteById(id);
     }
 
-    public PaginationResult getAllCities(CityRequestParams filterParams) {
+    public PaginationResult getAllCities(CityRequestParams filterParams) throws WrongParamsFault {
         CityFilterSpecification spec = new CityFilterSpecification(filterParams);
         try {
             Sort currentSorting = filterParams.parseSorting();
@@ -71,26 +82,41 @@ public class SoapCityService {
             PaginationResult result = new PaginationResult(filterParams.size, filterParams.page, count,res.getContent().toArray(new City[res.getContent().size()]));
             return result;
         } catch (ParseException e) {
-            return null;
+            throw new WrongParamsFault(e.getMessage(), new WebServiceExceptionFaultDto(e.getMessage(), 404));
         }
     }
 
-    public ArrayList<City> filterCitiesByMetersAboveSeaLevel(int metersAboveSeaLevel) {
+    public ArrayList<City> filterCitiesByMetersAboveSeaLevel(int metersAboveSeaLevel) throws WrongParamsFault {
         List<City> cities = cityRepository.findByMetersAboveSeaLevelGreaterThan(metersAboveSeaLevel);
-        return new ArrayList<>(cities);
+        if (cities.isEmpty()) {
+            String errorMsg = "Cities with meters above sea level more than " + metersAboveSeaLevel + " are not found";
+            throw new WrongParamsFault(errorMsg, new WebServiceExceptionFaultDto(errorMsg, 404));
+        } else {
+            return new ArrayList<>(cities);
+        }
     }
 
     private ResponseEntity<?> sendErrorList(ValidateFieldsException ex) {
-        return ResponseEntity.status(400).body(ex.getErrorMsg());
+        return ResponseEntity.status(400).body(ex.getErrorListWrap());
     }
 
-    public ArrayList<City> getCitiesByName(String name) {
+    public ArrayList<City> getCitiesByName(String name) throws WrongParamsFault {
         List<City> cities = cityRepository.findByNameContaining(name);
-        return new ArrayList<>(cities);
+        if (cities.isEmpty()) {
+            String errorMsg = "Cities with name " + name + " are not found";
+            throw new WrongParamsFault(errorMsg, new WebServiceExceptionFaultDto(errorMsg, 404));
+        } else {
+            return new ArrayList<>(cities);
+        }
     }
 
-    public ArrayList<String> getUniqueMetersAboveSeeLevel() {
+    public ArrayList<String> getUniqueMetersAboveSeaLevel() throws WrongParamsFault {
         List<String> meters = cityRepository.findDistinctMetersAboveSeaLevel();
-        return new ArrayList<>(meters);
+        if (meters.isEmpty()) {
+            String errorMsg = "Unique values of meters above sea level are not found";
+            throw new WrongParamsFault(errorMsg, new WebServiceExceptionFaultDto(errorMsg, 404));
+        } else {
+            return new ArrayList<>(meters);
+        }
     }
 }

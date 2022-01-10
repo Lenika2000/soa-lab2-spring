@@ -12,11 +12,11 @@ import java.util.List;
 
 public class HumanValidator {
     public Human validate(HumanFromClient human) throws IllegalAccessException, ValidateFieldsException {
-        List<Error> errorList = new ArrayList<>();
+        ArrayList<Error> errorList = new ArrayList<>();
         Human validatedHuman = new Human();
 
         if (human == null) {
-            throw new ValidateFieldsException(errorList);
+            throw new ValidateFieldsException("Human validate error", errorList);
         }
 
         for (Field f : HumanFromClient.class.getDeclaredFields()) {
@@ -41,7 +41,7 @@ public class HumanValidator {
         }
 
         if (errorList.size() > 0) {
-            throw new ValidateFieldsException(errorList);
+            throw new ValidateFieldsException("Human validate error", errorList);
         }
 
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSX");

@@ -2,16 +2,20 @@ package ru.itmo.soalab2.model;
 
 import javax.xml.ws.WebFault;
 
-@WebFault(name = "wrongParams")
+@WebFault(name = "wrongParamsFault", targetNamespace = "http://controller.soalab2.itmo.ru/")
 public class WrongParamsFault extends Exception {
-    private final int code;
+    private WebServiceExceptionFaultDto faultInfo;
 
-    public int getCode() {
-        return code;
+    public WrongParamsFault(String message, WebServiceExceptionFaultDto faultIFault){
+        super(message);
+        this.faultInfo = faultIFault;
     }
 
-    public WrongParamsFault(String message, int code){
-        super(message);
-        this.code = code;
+    public WebServiceExceptionFaultDto getFaultInfo() {
+        return faultInfo;
+    }
+
+    public void setFaultInfo(WebServiceExceptionFaultDto faultInfo) {
+        this.faultInfo = faultInfo;
     }
 }

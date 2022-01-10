@@ -13,8 +13,8 @@ import ru.itmo.soalab2.validators.CityValidator;
 import ru.itmo.soalab2.validators.ValidateFieldsException;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CityService {
@@ -29,7 +29,7 @@ public class CityService {
     public ResponseEntity<?> createCity(CityFromClient newCity) throws Exception {
         try {
             City validCity = cityValidator.validate(newCity);
-            validCity.setCreationDate(ZonedDateTime.now());
+            validCity.setCreationDate(LocalDateTime.now());
             Long id = cityRepository.save(validCity).getId();
             return ResponseEntity.status(201).body(new OperationResponse(id, "City created successfully"));
         } catch (ValidateFieldsException ex) {
@@ -87,7 +87,7 @@ public class CityService {
     }
 
     private ResponseEntity<?> sendErrorList(ValidateFieldsException ex) {
-        return ResponseEntity.status(400).body(ex.getErrorMsg());
+        return ResponseEntity.status(400).body(ex.getErrorListWrap());
     }
 
     public ResponseEntity<List<City>> getCitiesByName(String name) {

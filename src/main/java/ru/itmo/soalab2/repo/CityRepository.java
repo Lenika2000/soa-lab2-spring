@@ -6,7 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import ru.itmo.soalab2.model.City;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -16,5 +16,5 @@ public interface  CityRepository extends PagingAndSortingRepository<City, Long>,
     @Query("SELECT DISTINCT c.metersAboveSeaLevel FROM City c ORDER BY c.metersAboveSeaLevel ASC")
     List<String> findDistinctMetersAboveSeaLevel();
     @Query("SELECT c.creationDate FROM City c where c.id = ?1 ")
-    ZonedDateTime findCreationDateByCityId(long id);
+    LocalDateTime findCreationDateByCityId(long id);
 }

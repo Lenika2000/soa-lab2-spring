@@ -26,50 +26,37 @@ public class CitiesSoapController implements CitiesSoapControllerInterface {
     }
 
     @Override
-    public PaginationResult getCities(CityRequestParams filterParams) {
-//        CityRequestParams filterParams = new CityRequestParams(params);
+    public PaginationResult getCities(CityRequestParams filterParams) throws WrongParamsFault {
         return soapCityService.getAllCities(filterParams);
     }
 
     @Override
-    public City addCity(CityFromClient cityFromClient) throws Exception {
-        try {
-            return soapCityService.createCity(cityFromClient);
-        } catch (ValidateFieldsException e) {
-            return null;
-        }
+    public City addCity(CityFromClient cityFromClient) throws ValidateFieldsException {
+        return soapCityService.createCity(cityFromClient);
     }
 
     @Override
-    public City updateCity(CityFromClient cityFromClient) throws Exception {
-        try {
-            return soapCityService.updateCity(cityFromClient);
-        } catch (ValidateFieldsException e) {
-            return null;
-        }
+    public City updateCity(CityFromClient cityFromClient) throws ValidateFieldsException {
+        return soapCityService.updateCity(cityFromClient);
     }
 
     @Override
     public void deleteCity(Long id) throws WrongParamsFault {
-        try {
-            soapCityService.deleteCity(id);
-        } catch (CityServiceException e) {
-            throw new WrongParamsFault(e.getMessage(), e.getResponseCode());
-        }
+        soapCityService.deleteCity(id);
     }
 
     @Override
-    public CityListWrap getCitiesByMetersAboveSeaLevel(String metersAboveSeaLevel) {
+    public CityListWrap getCitiesByMetersAboveSeaLevel(String metersAboveSeaLevel) throws WrongParamsFault {
         return new CityListWrap(soapCityService.filterCitiesByMetersAboveSeaLevel(new Integer(metersAboveSeaLevel)));
     }
 
     @Override
-    public CityListWrap getCitiesByName(String name) {
+    public CityListWrap getCitiesByName(String name) throws WrongParamsFault {
         return new CityListWrap(soapCityService.getCitiesByName(name));
     }
 
     @Override
-    public MetersAboveSeaLevelListWrap getUniqueMetersAboveSeaLevel() {
-        return new MetersAboveSeaLevelListWrap(soapCityService.getUniqueMetersAboveSeeLevel());
+    public MetersAboveSeaLevelListWrap getUniqueMetersAboveSeaLevel() throws WrongParamsFault {
+        return new MetersAboveSeaLevelListWrap(soapCityService.getUniqueMetersAboveSeaLevel());
     }
 }

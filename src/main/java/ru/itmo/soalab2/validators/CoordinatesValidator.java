@@ -10,10 +10,10 @@ import java.util.List;
 
 public class CoordinatesValidator {
     public Coordinates validate(CoordinatesFromClient coordinates) throws IllegalAccessException, ValidateFieldsException {
-        List<Error> errorList = new ArrayList<>();
+        ArrayList<Error> errorList = new ArrayList<>();
         Coordinates validatedCoordinates = new Coordinates();
         if (coordinates == null) {
-            throw new ValidateFieldsException(errorList);
+            throw new ValidateFieldsException("Coordinates validate error", errorList);
         }
 
         for (Field f : CoordinatesFromClient.class.getDeclaredFields()) {
@@ -52,7 +52,7 @@ public class CoordinatesValidator {
         }
 
         if (errorList.size() > 0) {
-            throw new ValidateFieldsException(errorList);
+            throw new ValidateFieldsException("Coordinates validate error", errorList);
         }
         if (coordinates.getId() != 0) validatedCoordinates.setId(coordinates.getId());
         return validatedCoordinates;

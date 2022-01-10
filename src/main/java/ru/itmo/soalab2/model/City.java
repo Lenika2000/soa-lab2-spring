@@ -5,7 +5,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -24,7 +26,8 @@ public class City implements Serializable {
     @XmlElement
     private Coordinates coordinates; //Поле не может быть null
     @XmlElement
-    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    private LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @XmlElement
     private float area; //Значение поля должно быть больше 0
     @XmlElement
@@ -44,7 +47,7 @@ public class City implements Serializable {
     @XmlElement
     private Human governor; //Поле может быть null
 
-    public City(Long id, String name, Coordinates coordinates, ZonedDateTime creationDate, float area, int population, Integer metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {
+    public City(Long id, String name, Coordinates coordinates, LocalDateTime creationDate, float area, int population, Integer metersAboveSeaLevel, Double timezone, Government government, StandardOfLiving standardOfLiving, Human governor) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -85,11 +88,11 @@ public class City implements Serializable {
         this.coordinates = coordinates;
     }
 
-    public ZonedDateTime getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(ZonedDateTime creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
